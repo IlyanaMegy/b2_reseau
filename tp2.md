@@ -129,3 +129,10 @@ PING google.com (142.250.179.110) 56(84) bytes of data.
 *🌞Analyse de trames*
 
 
+| ordre | type trame  | IP source | MAC source                 | IP destination | MAC destination            |
+|-------|-------------|-----------|----------------------------|----------------|---------------------------|
+| 1     | Ping        | 10.2.1.11 | `node1` `08:00:27:8d:37:5a`| 8.8.8.8        |`router``08:00:27:e9:14:61` |
+| 2     | Pong        | 8.8.8.8   | `router``08:00:27:e9:14:61`| 10.2.1.11      | `node1``08:00:27:8d:37:5a` |
+
+## III. DHCP
+
