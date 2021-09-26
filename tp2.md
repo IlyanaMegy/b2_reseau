@@ -55,6 +55,14 @@ C:\Users\ily>scp ily@10.2.1.11:/home/ily/file.pcap \Users\ily\Downloads
 10.2.2.0/24 dev enp0s9 proto kernel scope link src 10.2.2.254 metric 102
 10.2.2.12 via 10.2.2.254 dev enp0s9
 
+[ily@node1 ~]$ [ily@node1 ~]$ ip r s
+10.2.1.0/24 dev enp0s8 proto kernel scope link src 10.2.1.11 metric 100
+10.2.2.0/24 via 10.2.1.254 dev enp0s8 proto static metric 100
+
+[ily@toto ~]$ [ily@toto ~]$ ip r s
+10.2.1.0/24 via 10.2.2.254 dev enp0s8 proto static metric 100
+10.2.2.0/24 dev enp0s8 proto kernel scope link src 10.2.2.12 metric 100
+
 [ily@node1 network-scripts]$ ping 10.2.2.12
 PING 10.2.2.12 (10.2.2.12) 56(84) bytes of data.
 64 bytes from 10.2.2.12: icmp_seq=1 ttl=63 time=1.88 ms
@@ -75,5 +83,49 @@ PING 10.2.1.11 (10.2.1.11) 56(84) bytes of data.
 | 5     | Ping 				| **node1** 	 `10.2.1.11`| `08 00 27 8d 37 5a`| **toto** 	 `10.2.2.12`| `08:00:27:30:74:34` |
 | 6     | Pong			  | **toto** 	   `10.2.2.12`| `08:00:27:30:74:34`| **node1** 	 `10.2.1.11`|`08 00 27 8d 37 5a`|
 
-
 ---
+*🌞Donnez un accès internet à vos machines*
+
+```
+sudo ip route add default via 10.2.1.254 dev enp0s8
+
+[ily@node1 ~]$ ip r s
+default via 10.2.1.254 dev enp0s8
+
+[ily@node1 ~]$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=110 time=140 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=110 time=86.9 ms
+```
+```
+[ily@toto ~]$ sudo ip route add default via 10.2.2.254 dev enp0s8
+
+[ily@toto ~]$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=110 time=258 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=110 time=56.8 ms
+```
+
+```
+[ily@toto ~]$ dig google.com
+; <<>> DiG 9.11.26-RedHat-9.11.26-4.el8_4 <<>> google.com
+
+[ily@toto ~]$ ping google.com
+PING google.com (142.250.178.142) 56(84) bytes of data.
+64 bytes from par21s22-in-f14.1e100.net (142.250.178.142): icmp_seq=1 ttl=109 time=45.5 ms
+64 bytes from par21s22-in-f14.1e100.net (142.250.178.142): icmp_seq=2 ttl=109 time=52.5 ms
+```
+```
+[ily@node1 ~]$ [ily@node1 ~]$ dig google.com
+; <<>> DiG 9.11.26-RedHat-9.11.26-4.el8_4 <<>> google.com
+
+[ily@node1 ~]$ ping google.com
+PING google.com (142.250.179.110) 56(84) bytes of data.
+64 bytes from par21s20-in-f14.1e100.net (142.250.179.110): icmp_seq=1 ttl=111 time=103 ms
+64 bytes from par21s20-in-f14.1e100.net (142.250.179.110): icmp_seq=2 ttl=111 time=52.1 ms
+```
+---
+
+*🌞Analyse de trames*
+
+
