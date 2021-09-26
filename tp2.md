@@ -136,3 +136,17 @@ PING google.com (142.250.179.110) 56(84) bytes of data.
 
 ## III. DHCP
 
+    sudo cat /etc/dhcp/dhcpd.conf
+    [sudo] password for ily:
+    default-lease-time 600;
+    max-lease-time 7200;
+    
+    authoritative;
+    subnet 10.2.1.0 netmask 255.255.255.0 {
+        range dynamic-bootp 10.2.1.20 10.2.1.253;
+        option domain-name-servers 1.1.1.1;
+        option subnet-mask 255.255.255.0;
+        option routers 10.2.1.254;
+    }
+
+-> Je me suis arrêtée là parce que il y avait un problème d'assignation d'IP sur node2; le server lui assigne systématiquement l'IP de node1.
