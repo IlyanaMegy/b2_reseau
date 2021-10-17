@@ -20,12 +20,12 @@
 |Nom machine|Adresse dans`client1`|Adresse dans `server1`|Adresse dans `server2`|Adresse passerelle|
 |-----------|---------------------|----------------------|----------------------|------------------|
 |`router.tp3` |`10.3.1.190/26`|`10.3.1.126/25`|`10.3.1.206/28`|Carte NAT|
-|`dhcp_client1.tp3`|`10.3.1.189/26`|-|-|`10.3.1.190/26`|
+|`dhcp.client1.tp3`|`10.3.1.189/26`|-|-|`10.3.1.190/26`|
 |`marcel`|DHCP|-|-|`10.3.1.190/26`|
-|`dns1.server1.tp3`|`10.3.1.125/25`|-|-|`10.3.1.126/25`|
+|`dns1.server1.tp3`|-|`10.3.1.125/25`|-|`10.3.1.126/25`|
 |`johnny.client1.tp3`|DHCP|-|-|`10.3.1.190/26`|
-
-  
+|`web1.server2.tp3`|-|-|`10.3.1.205/28`|`10.3.1.206/28`|
+|`nfs1.server2.tp3`|-|-|`10.3.1.204/28`|`10.3.1.206/28`|
   ---
 
 **2. Routeur**
@@ -140,8 +140,77 @@ https://techviewleo.com/configure-bind-master-dns-server-on-rocky-linux/
 
 ---
 
-**3. Get deeper**
-🌞 **Affiner la configuration du DHCP**
+## III. Services métier
 
+**1. Serveur Web**
 
+🌞 **Setup d'une nouvelle machine, qui sera un serveur Web, une belle appli pour nos clients**
+
+https://gitlab.com/it4lik/b2-linux-2020/-/blob/master/cours/memo/part.md
+
+    [ily@web1 ~]$ sudo systemctl status nginx
+    ● nginx.service - The nginx HTTP and reverse proxy server
+       Loaded: loaded (/usr/lib/systemd/system/nginx.service; disabled; vendor preset:>
+       Active: active (running) since Sun 2021-10-17 13:04:45 CEST; 2min 27s ago
+    
+    [ily@web1 ~]$ sudo firewall-cmd --list-all
+    public (active)
+      target: default
+      icmp-block-inversion: no
+      interfaces: enp0s3
+      sources:
+      services: cockpit dhcpv6-client ssh
+      ports: 22/tcp 80/tcp 443/tcp
+---
+🌞 **Test test test et re-test**
+
+    [ily@marcel ~]$ curl -l web1.server2.tp3
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+    
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+      <head>
+        <title>Test Page for the Nginx HTTP Server on Rocky Linux</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style type="text/css">
+---
+**2. Partage de fichiers**
+*B. Le setup wola*
+
+    [ily@web1 ~]$ df -h
+    nfs1.server2.tp3:/srv/nfs_share  6.2G  2.1G  4.2G  34% /srv/nfs
+
+	[ily@web1 /]$ cat /srv/nfs/some_file.txt
+    hello world !
+---
+
+## IV. Un peu de théorie : TCP et UDP
+
+🌞 **Déterminer, pour chacun de ces protocoles, s'ils sont encapsulés dans du TCP ou de l'UDP :**
+
+SSH : TCP 
+HTTP : TCP 
+DNS : UDP 
+NFS : TCP
+
+## V. El final
+
+![enter image description here](https://cdn.discordapp.com/attachments/889061317321838627/899273537028771840/unknown.png)
+
+| Nom du réseau | Adresse du réseau | Masque | Nombre de clients possibles | Adresse passerelle | Adresse broadcast |
+|---------------|-------------------|---------------|-----------------------------|--------------------|----------------------------------------------------------------------------------------------|
+| `server1` | `10.3.1.0` | `255.255.255.128` | 128 | `10.3.1.126` | `10.3.1.127` |
+| `client1` | `10.3.1.128` | `255.255.255.192` | 64 | `10.3.1.190` | `10.3.1.191` |
+| `server2` | `10.3.1.192` | `255.255.255.240` | 16 | `10.3.1.206` | `10.3.1.207` |
+
+---
+
+|Nom machine|Adresse dans`client1`|Adresse dans `server1`|Adresse dans `server2`|Adresse passerelle|
+|-----------|---------------------|----------------------|----------------------|------------------|
+|`router.tp3` |`10.3.1.190/26`|`10.3.1.126/25`|`10.3.1.206/28`|Carte NAT|
+|`dhcp.client1.tp3`|`10.3.1.189/26`|-|-|`10.3.1.190/26`|
+|`marcel`|DHCP|-|-|`10.3.1.190/26`|
+|`dns1.server1.tp3`|-|`10.3.1.125/25`|-|`10.3.1.126/25`|
+|`johnny.client1.tp3`|DHCP|-|-|`10.3.1.190/26`|
+|`web1.server2.tp3`|-|-|`10.3.1.205/28`|`10.3.1.206/28`|
+|`nfs1.server2.tp3`|-|-|`10.3.1.204/28`|`10.3.1.206/28`|
 
